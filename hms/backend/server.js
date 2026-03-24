@@ -13,6 +13,8 @@ import patientRoutes from "./routes/patients.js";
 import doctorRoutes from "./routes/doctors.js";
 import appointmentRoutes from "./routes/appointments.js";
 import billingRoutes from "./routes/billing.js";
+import labRoutes from "./routes/lab.js";
+import pharmacyRoutes from "./routes/pharmacy.js";
 import notificationRoutes from "./routes/notifications.js";
 
 dotenv.config();
@@ -24,10 +26,24 @@ const app = express();
 const httpServer = http.createServer(app);
 
 initSocket(httpServer);
+app.disable("etag");
+
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:8080",
+  "http://127.0.0.1:8080",
+].filter(Boolean);
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "*",
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
   })
 );
@@ -54,6 +70,8 @@ app.use("/api/v1/patients", patientRoutes);
 app.use("/api/v1/doctors", doctorRoutes);
 app.use("/api/v1/appointments", appointmentRoutes);
 app.use("/api/v1/billing", billingRoutes);
+app.use("/api/v1/lab", labRoutes);
+app.use("/api/v1/pharmacy", pharmacyRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 
 app.use((req, res) =>
@@ -66,9 +84,10 @@ app.use((req, res) =>
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-httpServer.listen(PORT, () => {
-  console.log(`Medicare HMS API running on port ${PORT}`);
-  console.log(`Health: http://localhost:${PORT}/health`);
+const HOST = process.env.HOST || "127.0.0.1";
+httpServer.listen(PORT, HOST, () => {
+  console.log(`Medicare HMS API running on http://${HOST}:${PORT}`);
+  console.log(`Health: http://${HOST}:${PORT}/health`);
 });
 
 export default app;

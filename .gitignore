@@ -1,0 +1,67 @@
+# Node dependencies
+node_modules/
+**/node_modules/
+
+# Package manager caches
+.npm/
+.pnpm-store/
+.yarn/
+.yarn-cache/
+
+# Build output
+dist/
+build/
+coverage/
+.vite/
+.nyc_output/
+
+# Tooling caches
+.cache/
+.eslintcache
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+!.env.example
+!.env.sample
+!**/.env.example
+!**/.env.sample
+
+# Logs and runtime artifacts
+*.log
+*.out
+*.err
+*.pid
+*.pid.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# App-specific local artifacts
+hms/backend/.env
+hms/backend/*.log
+hms/backend/*.out
+hms/backend/*.err
+hms/frontend/*.log
+hms/frontend/*.out
+hms/frontend/*.err
+
+# IDE and OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+
+# Local database and dump files
+*.sqlite
+*.sqlite3
+*.db
+*.sql.gz
