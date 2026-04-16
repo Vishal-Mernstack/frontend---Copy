@@ -33,7 +33,12 @@ router.get("/", authenticate, authorize(["admin", "doctor", "staff", "nurse", "r
     const total = parseInt(countResult.rows[0].count);
 
     const result = await query(
-      `SELECT d.*, doc.name as head_doctor_name 
+      `SELECT 
+        d.*, 
+        doc.name as head_doctor_name,
+        doc.specialization as head_doctor_specialization,
+        (SELECT COUNT(*) FROM doctors WHERE doctors.specialization ILIKE '%' || d.name || '%' OR doctors.specialization ILIKE '%' || d.description || '%') as doctor_count,
+        (SELECT COUNT(*) FROM beds WHERE beds.department_id = d.id) as bed_count
        FROM departments d 
        LEFT JOIN doctors doc ON d.head_doctor_id = doc.id 
        ${whereClause} 
@@ -41,6 +46,15 @@ router.get("/", authenticate, authorize(["admin", "doctor", "staff", "nurse", "r
        LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}`,
       [...params, limit, offset]
     );
+
+    const statsResult = await query(`
+      SELECT 
+        COUNT(*) FILTER (WHERE status = 'Active') as active_count,
+        (SELECT COUNT(*) FROM doctors) as total_doctors,
+        (SELECT COUNT(*) FROM beds WHERE status = 'Occupied') as occupied_beds,
+        (SELECT COUNT(*) FROM beds) as total_beds
+      FROM departments WHERE is_deleted = false
+    `);
 
     res.json({
       success: true,
@@ -52,6 +66,7 @@ router.get("/", authenticate, authorize(["admin", "doctor", "staff", "nurse", "r
           limit: parseInt(limit),
           totalPages: Math.ceil(total / limit),
         },
+        stats: statsResult.rows[0] || {},
       },
     });
   } catch (error) {
