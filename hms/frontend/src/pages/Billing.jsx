@@ -84,11 +84,14 @@ export default function Billing() {
     updating,
   } = useBilling({ page: 1, limit: 200, search: debouncedSearch });
 
-  const patients = usePatients({ page: 1, limit: 200 })?.data?.items || [];
-  const doctors = useDoctors({ page: 1, limit: 200 })?.data?.items || [];
-  const appointments = useAppointments({ page: 1, limit: 200 })?.data?.items || [];
+  const patientsData = usePatients({ page: 1, limit: 200 })?.data?.items;
+  const patients = useMemo(() => patientsData || [], [patientsData]);
+  const doctorsData = useDoctors({ page: 1, limit: 200 })?.data?.items;
+  const doctors = useMemo(() => doctorsData || [], [doctorsData]);
+  const appointmentsData = useAppointments({ page: 1, limit: 200 })?.data?.items;
+  const appointments = useMemo(() => appointmentsData || [], [appointmentsData]);
 
-  const records = data?.items || [];
+  const records = useMemo(() => data?.items || [], [data?.items]);
 
   const filteredRecords = useMemo(() => {
     let items = [...records];

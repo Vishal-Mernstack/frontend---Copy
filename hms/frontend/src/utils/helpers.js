@@ -19,7 +19,7 @@ export function formatCurrency(value) {
   return amount.toLocaleString("en-IN", { style: "currency", currency: "INR" });
 }
 
-export function downloadCSV(filename, rows) {
+export function downloadCSV(rows, filename) {
   if (!rows?.length) return;
   const headers = Object.keys(rows[0]);
   const csv = [headers.join(",")]

@@ -13,8 +13,8 @@ const router = Router();
 
 router.get("/", authenticate, authorize(["admin", "staff", "doctor", "nurse", "receptionist", "patient"]), getAllDoctors);
 router.get("/:id", authenticate, authorize(["admin", "staff", "doctor", "nurse", "receptionist", "patient"]), getDoctorById);
-router.post("/", authenticate, authorize(["admin"]), validate(schemas.doctorCreate), createDoctor);
-router.put("/:id", authenticate, authorize(["admin"]), validate(schemas.doctorUpdate), updateDoctor);
+router.post("/", authenticate, authorize(["admin", "staff"]), validate(schemas.doctorCreate), createDoctor);
+router.put("/:id", authenticate, authorize(["admin", "staff"]), validate(schemas.doctorUpdate), updateDoctor);
 router.delete("/:id", authenticate, authorize(["admin"]), deleteDoctor);
 
 export default router;

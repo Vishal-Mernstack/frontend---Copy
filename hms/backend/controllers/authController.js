@@ -67,14 +67,16 @@ export const login = async (req, res, next) => {
       return res.status(401).json({ success: false, data: null, message: "Invalid credentials" });
     }
 
-    const expiresIn = process.env.JWT_EXPIRES_IN || "7d";
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn,
+const expiresIn = process.env.JWT_EXPIRES_IN || "7d";
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn });
+    
+    const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET || "refresh_secret_key_2024", {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "30d",
     });
 
     return res.json({
       success: true,
-      data: { user: { id: user.id, name: user.name, email: user.email, role: user.role }, token },
+      data: { user: { id: user.id, name: user.name, email: user.email, role: user.role }, token, refreshToken },
       message: "Login successful",
     });
   } catch (error) {
@@ -106,5 +108,39 @@ export const me = async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return next(error);
+  }
+};
+
+/**
+ * Refresh access token using refresh token.
+ */
+export const refreshToken = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization || "";
+    const refreshTokenStr = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+
+    if (!refreshTokenStr) {
+      return res.status(401).json({ success: false, data: null, message: "Refresh token required" });
+    }
+
+    const decoded = jwt.verify(refreshTokenStr, process.env.REFRESH_TOKEN_SECRET || "refresh_secret_key_2024");
+    
+    const result = await query("SELECT id, name, email, role FROM users WHERE id = $1", [decoded.id]);
+    if (!result.rows.length) {
+      return res.status(401).json({ success: false, data: null, message: "User not found" });
+    }
+
+    const user = result.rows[0];
+    const accessToken = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN || "1d",
+    });
+
+    return res.json({
+      success: true,
+      data: { user, accessToken },
+      message: "Token refreshed",
+    });
+  } catch (error) {
+    return res.status(401).json({ success: false, data: null, message: "Invalid refresh token" });
   }
 };

@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import EmptyState from "../components/shared/EmptyState";
+import FileDropZone from "../components/shared/FileDropZone";
 import LoadingSkeleton from "../components/shared/LoadingSkeleton";
 import Pagination from "../components/shared/Pagination";
 import useDebounce from "../hooks/useDebounce";
@@ -30,15 +31,18 @@ export default function Lab() {
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const debouncedSearch = useDebounce(search, 300);
   const { data, isLoading, error, createLabOrder, updateLabOrder, creating, updating } = useLab({
     page: 1,
     limit: 200,
     search: debouncedSearch,
   });
-  const patients = usePatients({ page: 1, limit: 200 })?.data?.items || [];
-  const doctors = useDoctors({ page: 1, limit: 200 })?.data?.items || [];
-  const items = data?.items || [];
+  const patientsData = usePatients({ page: 1, limit: 200 })?.data?.items;
+  const patients = useMemo(() => patientsData || [], [patientsData]);
+  const doctorsData = useDoctors({ page: 1, limit: 200 })?.data?.items;
+  const doctors = useMemo(() => doctorsData || [], [doctorsData]);
+  const items = useMemo(() => data?.items || [], [data?.items]);
   const totalPages = Math.max(1, Math.ceil(items.length / 10));
   const pagedItems = useMemo(() => items.slice((page - 1) * 10, page * 10), [items, page]);
 
@@ -48,14 +52,25 @@ export default function Lab() {
   });
 
   const saveOrder = async (values) => {
+    const payload = { ...values, files: uploadedFiles };
     if (editing) {
-      await updateLabOrder({ id: editing.id, payload: values });
+      await updateLabOrder({ id: editing.id, payload });
     } else {
-      await createLabOrder(values);
+      await createLabOrder(payload);
     }
     setOpen(false);
     setEditing(null);
+    setUploadedFiles([]);
     form.reset({ patient_id: "", doctor_id: "", test_name: "", result: "", status: "Pending" });
+  };
+
+  const handleDialogClose = (open) => {
+    if (!open) {
+      setEditing(null);
+      setUploadedFiles([]);
+      form.reset({ patient_id: "", doctor_id: "", test_name: "", result: "", status: "Pending" });
+    }
+    setOpen(open);
   };
 
   return (
@@ -138,7 +153,7 @@ export default function Lab() {
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{editing ? "Update Lab Order" : "Create Lab Order"}</DialogTitle>
@@ -184,6 +199,15 @@ export default function Lab() {
             <div className="md:col-span-2">
               <label className="text-sm font-medium text-slate-700">Result</label>
               <Input {...form.register("result")} placeholder="Enter result summary" />
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-sm font-medium text-slate-700">Lab Reports/Documents</label>
+              <FileDropZone
+                onFilesSelected={setUploadedFiles}
+                multiple={true}
+                title="Drop lab reports here, or click to browse"
+                description="Supports: PDF, Images, Word, Text (Max 10MB each)"
+              />
             </div>
           </div>
           <DialogFooter>

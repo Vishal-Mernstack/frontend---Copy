@@ -1,6 +1,10 @@
 import {
+  Activity,
+  Bed,
+  Calendar,
   CalendarClock,
   ClipboardList,
+  DollarSign,
   LayoutDashboard,
   Microscope,
   Pill,
@@ -8,6 +12,8 @@ import {
   Users,
   Receipt,
   HeartPulse,
+  Building2,
+  UserCheck,
 } from "lucide-react";
 
 export const normalizeRole = (role) => role || "staff";
@@ -78,14 +84,20 @@ export const ROLE_NAV_ITEMS = {
     { to: "/appointments", label: "Appointments", icon: CalendarClock },
     { to: "/billing", label: "Billing", icon: Receipt },
     { to: "/doctors", label: "Doctors", icon: Stethoscope },
+    { to: "/departments", label: "Departments", icon: Building2 },
+    { to: "/staff-management", label: "Staff", icon: UserCheck },
+    { to: "/beds", label: "Beds", icon: Bed },
+    { to: "/admissions", label: "Admissions", icon: UserCheck },
     { to: "/lab", label: "Lab", icon: Microscope },
     { to: "/pharmacy", label: "Pharmacy", icon: Pill },
+    { to: "/activity-logs", label: "Activity Logs", icon: Activity },
   ],
   doctor: [
     { to: "/doctor", label: "Workspace", icon: LayoutDashboard },
     { to: "/patients", label: "Patients", icon: Users },
     { to: "/appointments", label: "Appointments", icon: CalendarClock },
     { to: "/doctors", label: "Doctors", icon: Stethoscope },
+    { to: "/doctor-schedule", label: "Schedule & Fees", icon: Calendar },
     { to: "/lab", label: "Lab", icon: Microscope },
   ],
   staff: [

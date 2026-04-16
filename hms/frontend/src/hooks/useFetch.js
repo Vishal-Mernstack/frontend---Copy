@@ -36,6 +36,7 @@ const useFetch = (fetcher, dependencies = [], enabled = true) => {
     return () => {
       active = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 
   return { data, loading, error, setData };

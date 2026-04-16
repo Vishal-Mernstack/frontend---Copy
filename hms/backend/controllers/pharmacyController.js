@@ -43,7 +43,7 @@ export const getAllPharmacyItems = async (req, res, next) => {
       success: true,
       data: {
         items: itemsResult.rows,
-        pagination: { total, page, limit, pages: Math.max(1, Math.ceil(total / limit)) },
+        pagination: { total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) },
       },
       message: "Pharmacy items fetched",
     });
@@ -75,7 +75,13 @@ export const createPharmacyItem = async (req, res, next) => {
 
 export const updatePharmacyItem = async (req, res, next) => {
   try {
-    const existing = await query("SELECT * FROM pharmacy WHERE id = $1", [req.params.id]);
+    const { id } = req.params;
+    const parsedId = Number(id);
+    if (!Number.isInteger(parsedId) || parsedId <= 0) {
+      return res.status(400).json({ success: false, data: null, message: "Invalid pharmacy item ID" });
+    }
+    
+    const existing = await query("SELECT * FROM pharmacy WHERE id = $1", [id]);
     if (!existing.rows.length) {
       return res.status(404).json({ success: false, data: null, message: "Pharmacy item not found" });
     }
@@ -89,15 +95,56 @@ export const updatePharmacyItem = async (req, res, next) => {
       status: req.body.status ?? current.status,
     };
 
-    await query(
+await query(
       `UPDATE pharmacy
        SET medicine_name = $1, manufacturer = $2, stock = $3, price = $4, status = $5, updated_at = NOW()
        WHERE id = $6`,
-      [payload.medicine_name, payload.manufacturer, payload.stock, payload.price, payload.status, req.params.id]
+      [payload.medicine_name, payload.manufacturer, payload.stock, payload.price, payload.status, id]
     );
 
-    const resultRow = await query(`${pharmacySelect} WHERE id = $1`, [req.params.id]);
+    const resultRow = await query(`${pharmacySelect} WHERE id = $1`, [id]);
     return res.json({ success: true, data: resultRow.rows[0], message: "Pharmacy item updated" });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const getPharmacyItemById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const parsedId = Number(id);
+    if (!Number.isInteger(parsedId) || parsedId <= 0) {
+      return res.status(400).json({ success: false, data: null, message: "Invalid pharmacy item ID" });
+    }
+    
+    const result = await query(`${pharmacySelect} WHERE id = $1`, [id]);
+
+    if (!result.rows.length) {
+      return res.status(404).json({ success: false, data: null, message: "Pharmacy item not found" });
+    }
+
+    return res.json({ success: true, data: result.rows[0], message: "Pharmacy item fetched" });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const deletePharmacyItem = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const parsedId = Number(id);
+    if (!Number.isInteger(parsedId) || parsedId <= 0) {
+      return res.status(400).json({ success: false, data: null, message: "Invalid pharmacy item ID" });
+    }
+    
+    const existing = await query("SELECT * FROM pharmacy WHERE id = $1", [id]);
+
+    if (!existing.rows.length) {
+      return res.status(404).json({ success: false, data: null, message: "Pharmacy item not found" });
+    }
+
+    await query("DELETE FROM pharmacy WHERE id = $1", [id]);
+    return res.json({ success: true, message: "Pharmacy item deleted" });
   } catch (error) {
     return next(error);
   }

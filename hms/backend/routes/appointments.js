@@ -7,10 +7,12 @@ import {
   createAppointment,
   updateAppointment,
   deleteAppointment,
+  APPOINTMENT_STATUSES,
 } from "../controllers/appointmentController.js";
 
 const router = Router();
 
+router.get("/statuses", (req, res) => res.json({ success: true, data: APPOINTMENT_STATUSES }));
 router.get("/", authenticate, authorize(["admin", "staff", "doctor", "nurse", "receptionist", "patient"]), getAllAppointments);
 router.get("/:id", authenticate, authorize(["admin", "staff", "doctor", "nurse", "receptionist", "patient"]), getAppointmentById);
 router.post("/", authenticate, authorize(["admin", "staff", "nurse", "receptionist"]), validate(schemas.appointmentCreate), createAppointment);

@@ -1,4 +1,5 @@
 import { query } from "../config/db.js";
+import { logAudit } from "../db/audit.js";
 
 const billingSelect = `
   SELECT
@@ -7,10 +8,10 @@ const billingSelect = `
     b.patient_id,
     b.doctor_id,
     b.appointment_id,
-    COALESCE(b.amount, 0) AS amount,
-    COALESCE(b.discount, 0) AS discount,
-    COALESCE(b.tax, 0) AS tax,
-    COALESCE(b.total, 0) AS total,
+    COALESCE(b.amount, 0)::numeric AS amount,
+    COALESCE(b.discount, 0)::numeric AS discount,
+    COALESCE(b.tax, 0)::numeric AS tax,
+    COALESCE(b.total, 0)::numeric AS total,
     COALESCE(b.status, 'Pending') AS status,
     COALESCE(b.payment_method, '') AS payment_method,
     b.invoice_date,
@@ -26,6 +27,7 @@ const billingSelect = `
   FROM billing b
   JOIN patients p ON p.id = b.patient_id
   JOIN doctors d ON d.id = b.doctor_id
+  WHERE b.is_deleted = false
 `;
 
 const createInvoiceCode = async () => {
@@ -44,27 +46,30 @@ export const getAllBilling = async (req, res, next) => {
     const offset = (page - 1) * limit;
 
     const params = [];
-    let where = "WHERE 1=1";
+    let filters = "";
+    let countFilters = "WHERE b.is_deleted = false";
 
     if (search) {
       params.push(`%${search}%`);
       const idx = params.length;
-      where += ` AND (p.name ILIKE $${idx} OR d.name ILIKE $${idx} OR b.invoice_id ILIKE $${idx})`;
+      filters += ` AND (p.name ILIKE $${idx} OR d.name ILIKE $${idx} OR b.invoice_id ILIKE $${idx})`;
+      countFilters += ` AND (p.name ILIKE $${idx} OR d.name ILIKE $${idx} OR b.invoice_id ILIKE $${idx})`;
     }
     if (status) {
       params.push(status);
-      where += ` AND b.status = $${params.length}`;
+      filters += ` AND b.status = $${params.length}`;
+      countFilters += ` AND b.status = $${params.length}`;
     }
 
     params.push(limit, offset);
 
     const [itemsResult, countResult] = await Promise.all([
       query(
-        `${billingSelect} ${where} ORDER BY b.invoice_date DESC, b.id DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
+        `${billingSelect} ${filters} ORDER BY b.invoice_date DESC, b.id DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
         params
       ),
       query(
-        `SELECT COUNT(*) FROM billing b JOIN patients p ON p.id = b.patient_id JOIN doctors d ON d.id = b.doctor_id ${where}`,
+        `SELECT COUNT(*) FROM billing b JOIN patients p ON p.id = b.patient_id JOIN doctors d ON d.id = b.doctor_id ${countFilters}`,
         params.slice(0, -2)
       ),
     ]);
@@ -75,23 +80,33 @@ export const getAllBilling = async (req, res, next) => {
       success: true,
       data: {
         items: itemsResult.rows,
-        pagination: { total, page, limit, pages: Math.max(1, Math.ceil(total / limit)) },
+        pagination: { total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) },
       },
       message: "Billing records fetched",
     });
   } catch (error) {
-    return next(error);
+    console.error('getAllBilling error:', error.message);
+    return res.status(500).json({ error: 'Failed to retrieve billing records' });
   }
 };
 
 export const getBillingById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await query(`${billingSelect} WHERE b.id = $1`, [id]);
+    const result = await query(`${billingSelect} AND b.id = $1`, [id]);
 
     if (!result.rows.length) {
       return res.status(404).json({ success: false, data: null, message: "Billing record not found" });
     }
+
+    await logAudit({
+      userId: req.user?.id,
+      action: "ACCESS",
+      entity: "billing",
+      entityId: id,
+      newValues: result.rows[0],
+      req
+    });
 
     return res.json({ success: true, data: result.rows[0], message: "Billing record fetched" });
   } catch (error) {
@@ -117,6 +132,27 @@ export const createBilling = async (req, res, next) => {
       paid_at,
       notes,
     } = req.body;
+
+    const parsedPatientId = Number(patient_id);
+    const parsedDoctorId = Number(doctor_id);
+    if (!Number.isInteger(parsedPatientId) || parsedPatientId <= 0) {
+      return res.status(400).json({ success: false, data: null, message: "Invalid patient ID" });
+    }
+    if (!Number.isInteger(parsedDoctorId) || parsedDoctorId <= 0) {
+      return res.status(400).json({ success: false, data: null, message: "Invalid doctor ID" });
+    }
+
+    const [patientExists, doctorExists] = await Promise.all([
+      query("SELECT id FROM patients WHERE id = $1 AND is_deleted = false", [patient_id]),
+      query("SELECT id FROM doctors WHERE id = $1 AND is_deleted = false", [doctor_id]),
+    ]);
+
+    if (!patientExists.rows.length) {
+      return res.status(400).json({ success: false, data: null, message: "Patient not found" });
+    }
+    if (!doctorExists.rows.length) {
+      return res.status(400).json({ success: false, data: null, message: "Doctor not found" });
+    }
 
     const computedTotal =
       total ?? Number(amount || 0) - Number(discount || 0) + Number(tax || 0);
@@ -144,7 +180,17 @@ export const createBilling = async (req, res, next) => {
       ]
     );
 
-    const created = await query(`${billingSelect} WHERE b.id = $1`, [result.rows[0].id]);
+    const created = await query(`${billingSelect} AND b.id = $1`, [result.rows[0].id]);
+
+    await logAudit({
+      userId: req.user?.id,
+      action: "CREATE",
+      entity: "billing",
+      entityId: result.rows[0].id,
+      newValues: created.rows[0],
+      req
+    });
+
     return res.status(201).json({ success: true, data: created.rows[0], message: "Billing record created" });
   } catch (error) {
     return next(error);
@@ -215,7 +261,7 @@ export const updateBilling = async (req, res, next) => {
       ]
     );
 
-    const updated = await query(`${billingSelect} WHERE b.id = $1`, [id]);
+    const updated = await query(`${billingSelect} AND b.id = $1`, [id]);
     return res.json({ success: true, data: updated.rows[0], message: "Billing record updated" });
   } catch (error) {
     return next(error);
@@ -225,13 +271,26 @@ export const updateBilling = async (req, res, next) => {
 export const deleteBilling = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await query("DELETE FROM billing WHERE id = $1 RETURNING id, invoice_id", [id]);
+    const existing = await query("SELECT * FROM billing WHERE id = $1 AND is_deleted = false", [id]);
 
-    if (!result.rows.length) {
+    if (!existing.rows.length) {
       return res.status(404).json({ success: false, data: null, message: "Billing record not found" });
     }
 
-    return res.json({ success: true, data: result.rows[0], message: "Billing record deleted" });
+    const current = existing.rows[0];
+    await query("UPDATE billing SET is_deleted = true, deleted_at = NOW() WHERE id = $1", [id]);
+
+    await logAudit({
+      userId: req.user?.id,
+      action: "DELETE",
+      entity: "billing",
+      entityId: id,
+      oldValues: current,
+      newValues: null,
+      req
+    });
+
+    return res.json({ success: true, data: { id: current.id, invoice_id: current.invoice_id }, message: "Billing record deleted" });
   } catch (error) {
     return next(error);
   }

@@ -36,35 +36,11 @@ import {
   formatDateTime,
 } from "../utils/helpers";
 
-const monthlyPatientsData = [
-  { month: "Oct", value: 120 },
-  { month: "Nov", value: 145 },
-  { month: "Dec", value: 160 },
-  { month: "Jan", value: 172 },
-  { month: "Feb", value: 190 },
-  { month: "Mar", value: 210 },
-  { month: "Apr", value: 230 },
-  { month: "May", value: 245 },
-  { month: "Jun", value: 260 },
-  { month: "Jul", value: 278 },
-  { month: "Aug", value: 290 },
-  { month: "Sep", value: 305 },
-];
-
-const weeklyAppointmentsData = [
-  { day: "Mon", value: 22 },
-  { day: "Tue", value: 28 },
-  { day: "Wed", value: 18 },
-  { day: "Thu", value: 35 },
-  { day: "Fri", value: 30 },
-  { day: "Sat", value: 16 },
-  { day: "Sun", value: 12 },
-];
-
 export default function Dashboard() {
-  const patients = usePatients({ page: 1, limit: 1 });
+  // Fetch more data for meaningful statistics
+  const patients = usePatients({ page: 1, limit: 200 });
   const doctors = useDoctors({ page: 1, limit: 1 });
-  const appointments = useAppointments({ page: 1, limit: 6 });
+  const appointments = useAppointments({ page: 1, limit: 100 });
   const billing = useBilling({ page: 1, limit: 200 });
 
   const [now, setNow] = useState(new Date());
@@ -75,11 +51,67 @@ export default function Dashboard() {
     return () => clearInterval(id);
   }, []);
 
+  // Calculate monthly patient growth from live API data
   const monthlyData = useMemo(() => {
-    if (range === "3m") return monthlyPatientsData.slice(-3);
-    if (range === "12m") return monthlyPatientsData.slice(-12);
-    return monthlyPatientsData.slice(-6);
-  }, [range]);
+    const items = patients.data?.items || [];
+    const monthCounts = {};
+    
+    // Initialize last 12 months with 0
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const monthKey = d.toLocaleDateString('en-US', { month: 'short' });
+      monthCounts[monthKey] = 0;
+    }
+    
+    // Count patients by creation month
+    items.forEach((item) => {
+      if (item?.created_at) {
+        const date = new Date(item.created_at);
+        const monthKey = date.toLocaleDateString('en-US', { month: 'short' });
+        if (monthCounts.hasOwnProperty(monthKey)) {
+          monthCounts[monthKey]++;
+        }
+      }
+    });
+    
+    // Convert to array format for chart
+    const data = Object.entries(monthCounts).map(([month, value]) => ({
+      month,
+      value
+    }));
+    
+    // Return based on selected range
+    if (range === "3m") return data.slice(-3);
+    if (range === "12m") return data.slice(-12);
+    return data.slice(-6);
+  }, [patients.data?.items, range]);
+
+  // Calculate weekly appointments from live API data
+  const weeklyAppointmentsData = useMemo(() => {
+    const items = appointments.data?.items || [];
+    const dayCounts = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 };
+    
+    items.forEach((item) => {
+      if (item?.appointment_date) {
+        const date = new Date(item.appointment_date);
+        const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+        if (dayCounts.hasOwnProperty(day)) {
+          dayCounts[day]++;
+        }
+      }
+    });
+    
+    return [
+      { day: "Mon", value: dayCounts.Mon },
+      { day: "Tue", value: dayCounts.Tue },
+      { day: "Wed", value: dayCounts.Wed },
+      { day: "Thu", value: dayCounts.Thu },
+      { day: "Fri", value: dayCounts.Fri },
+      { day: "Sat", value: dayCounts.Sat },
+      { day: "Sun", value: dayCounts.Sun },
+    ];
+  }, [appointments.data?.items]);
 
   const totalPatients = patients.data?.pagination?.total ?? 0;
   const totalDoctors = doctors.data?.pagination?.total ?? 0;

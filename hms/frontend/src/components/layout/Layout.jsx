@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
-import { useAuth } from "../../context/AuthContext";
-import { HOME_BY_ROLE } from "../../utils/roles";
 
 function Breadcrumbs({ pathname = "/" }) {
   const segments = pathname.split("/").filter(Boolean);
@@ -41,7 +39,6 @@ function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
   const openSidebar = useCallback(() => setSidebarOpen(true), []);
@@ -69,7 +66,7 @@ function Layout() {
   }, [navigate]);
 
   const contentKey = useMemo(() => location.pathname, [location.pathname]);
-  const homePath = HOME_BY_ROLE[user?.role] || "/";
+  const homePath = "/admin";
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -78,7 +75,7 @@ function Layout() {
         <div className="flex min-h-screen flex-1 flex-col">
           <Navbar onOpenSidebar={openSidebar} />
           <main className="flex-1 overflow-y-auto p-6">
-            <Breadcrumbs pathname={location.pathname === "/" ? homePath : location.pathname} />
+            <Breadcrumbs pathname={location.pathname} />
             <div key={contentKey} className="animate-in fade-in">
               <Outlet />
             </div>

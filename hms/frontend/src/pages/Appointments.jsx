@@ -96,10 +96,12 @@ export default function Appointments() {
     updating,
   } = useAppointments({ page: 1, limit: 200, search: debouncedSearch });
 
-  const patients = usePatients({ page: 1, limit: 200 })?.data?.items || [];
-  const doctors = useDoctors({ page: 1, limit: 200 })?.data?.items || [];
+  const patientsData = usePatients({ page: 1, limit: 200 })?.data?.items;
+  const patients = useMemo(() => patientsData || [], [patientsData]);
+  const doctorsData = useDoctors({ page: 1, limit: 200 })?.data?.items;
+  const doctors = useMemo(() => doctorsData || [], [doctorsData]);
 
-  const appointments = data?.items || [];
+  const appointments = useMemo(() => data?.items || [], [data?.items]);
 
   const filteredAppointments = useMemo(() => {
     let items = [...appointments];

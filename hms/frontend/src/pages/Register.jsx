@@ -37,7 +37,7 @@ const schema = z.object({
  * Register page.
  */
 export default function Register() {
-  const { register: registerUser } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(schema),
@@ -45,7 +45,7 @@ export default function Register() {
   });
 
   const onSubmit = async (values) => {
-    const result = await registerUser(values);
+    const result = await register(values);
     if (result.success) {
       navigate(HOME_BY_ROLE[values.role] || "/");
     }
@@ -109,7 +109,7 @@ export default function Register() {
             </Button>
           </form>
           <p className="mt-4 text-sm text-slate-500">
-            Already have an account? <Link to="/login" className="text-sky-600">Sign In</Link>
+            Already have an account? <Link to="/role-based-login" className="text-sky-600">Sign In</Link>
           </p>
         </CardContent>
       </Card>

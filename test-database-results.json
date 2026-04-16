@@ -1,0 +1,291 @@
+﻿{
+    "summary":  {
+                    "failed":  3,
+                    "passRate":  89.29,
+                    "total":  28,
+                    "passed":  25
+                },
+    "timestamp":  "2026-04-13 23:03:11",
+    "results":  [
+                    {
+                        "Test":  "Setup: Create Staff User",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591155)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Create Patient for FK Tests",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591182)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Create Doctor for FK Tests",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591197)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Create Appointment with Valid FKs",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591220)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Appointment with Invalid Patient ID (should fail)",
+                        "Passed":  true,
+                        "Details":  "Expected failure but got: insert or update on table \"appointments\" violates foreign key constraint \"appointments_patient_id_fkey\"",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591258)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Appointment with Invalid Doctor ID (should fail)",
+                        "Passed":  true,
+                        "Details":  "Expected failure but got: insert or update on table \"appointments\" violates foreign key constraint \"appointments_doctor_id_fkey\"",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591320)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Create Billing with Valid FKs",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591376)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Billing with Invalid Patient ID (should fail)",
+                        "Passed":  true,
+                        "Details":  "Expected failure but got: insert or update on table \"billing\" violates foreign key constraint \"billing_patient_id_fkey\"",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591385)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Empty Name Validation",
+                        "Passed":  true,
+                        "Details":  "Should reject empty name",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591391)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Very Long Name Handling",
+                        "Passed":  false,
+                        "Details":  "System should handle or reject long names",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591440)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Special Characters in Name",
+                        "Passed":  true,
+                        "Details":  "Should handle special characters",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591490)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Duplicate Email Prevention",
+                        "Passed":  true,
+                        "Details":  "Should reject duplicate email",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591515)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Boundary Age (130)",
+                        "Passed":  true,
+                        "Details":  "Should accept max boundary age",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591560)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Negative Age Rejection",
+                        "Passed":  true,
+                        "Details":  "Should reject negative age",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591575)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "SQL Injection Prevention (Search)",
+                        "Passed":  true,
+                        "Details":  "SQL injection should be prevented",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591623)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "SQL Injection Prevention (ID)",
+                        "Passed":  true,
+                        "Details":  "SQL injection in ID should fail",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591632)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "XSS Script Tag Handling",
+                        "Passed":  true,
+                        "Details":  "System should handle script tags safely",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591641)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "XSS Script Tag Sanitization",
+                        "Passed":  false,
+                        "Details":  "Script tags should be sanitized",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591643)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "NoSQL Injection Prevention",
+                        "Passed":  true,
+                        "Details":  "Should handle object injection safely",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591654)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "API Response Time (43 ms)",
+                        "Passed":  true,
+                        "Details":  "Response should be under 1 second",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591705)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Large Page Request (6 ms)",
+                        "Passed":  true,
+                        "Details":  "Large pages should load in under 2 seconds",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591712)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "No Token Access Rejected",
+                        "Passed":  true,
+                        "Details":  "Should reject unauthenticated requests",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591719)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Invalid Token Format Rejected",
+                        "Passed":  true,
+                        "Details":  "Invalid token rejected: 401",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591724)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Invalid Bearer Token Rejected",
+                        "Passed":  true,
+                        "Details":  "Invalid bearer rejected: 401",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591726)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Cleanup: Delete Billing",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591735)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Cleanup: Delete Appointment",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591742)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Cleanup: Delete Patient (CASCADE test)",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591750)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    },
+                    {
+                        "Test":  "Cleanup: Delete Doctor",
+                        "Passed":  false,
+                        "Details":  "Forbidden",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101591785)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:03:11"
+                                      }
+                    }
+                ]
+}

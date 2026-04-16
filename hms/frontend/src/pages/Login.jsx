@@ -7,6 +7,7 @@ import { Eye, EyeOff, Stethoscope } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useAuth } from "../context/AuthContext";
+import { HOME_BY_ROLE } from "../utils/roles";
 
 const schema = z.object({
   email: z.string().email("Invalid email address"),
@@ -15,7 +16,7 @@ const schema = z.object({
 
 export default function Login() {
   const navigate = useNavigate();
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, user, login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState("");
 
@@ -28,14 +29,14 @@ export default function Login() {
   });
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={HOME_BY_ROLE[user?.role] || "/"} replace />;
   }
 
   const onSubmit = async (values) => {
     setApiError("");
     const result = await login(values);
     if (result?.success) {
-      navigate("/");
+      navigate(HOME_BY_ROLE[result.user?.role] || "/");
     } else {
       setApiError(result?.message || "Login failed");
     }

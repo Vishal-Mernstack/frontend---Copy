@@ -1,5 +1,3 @@
-import { useAuth as useAuthContext } from "../context/AuthContext";
-
-const useAuth = () => useAuthContext();
+import { useAuth } from "../context/AuthContext";
 
 export default useAuth;

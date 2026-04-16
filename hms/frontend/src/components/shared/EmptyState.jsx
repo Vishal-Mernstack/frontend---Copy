@@ -8,6 +8,7 @@ export default function EmptyState({
   title = "No data",
   message = "Nothing to display yet.",
   description,
+  children,
 }) {
   const body = description || message;
 
@@ -16,6 +17,7 @@ export default function EmptyState({
       <Inbox className="h-8 w-8 text-slate-400" />
       <p className="text-sm font-semibold text-slate-900">{title}</p>
       <p className="text-xs text-slate-500">{body}</p>
+      {children}
     </div>
   );
 }
@@ -24,4 +26,5 @@ EmptyState.propTypes = {
   title: PropTypes.string,
   message: PropTypes.string,
   description: PropTypes.string,
+  children: PropTypes.node,
 };

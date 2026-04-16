@@ -69,7 +69,7 @@ export const getAllDoctors = async (req, res, next) => {
       success: true,
       data: {
         items: itemsResult.rows,
-        pagination: { total, page, limit, pages: Math.max(1, Math.ceil(total / limit)) },
+        pagination: { total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) },
       },
       message: "Doctors fetched",
     });

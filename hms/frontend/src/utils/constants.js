@@ -20,7 +20,7 @@ export const BADGE_VARIANTS = {
   Paid: "success",
   Pending: "warning",
   Overdue: "danger",
-  Inactive: "danger",
+  Inactive: "secondary",
 };
 
 export const THEME = {

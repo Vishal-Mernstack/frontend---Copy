@@ -3,6 +3,15 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"Start-Process powershell -ArgumentList '-NoExit','-Command','cd ''C:\\Users\\VISHAL\\OneDrive\\Documents\\Downloads\\frontend - Copy\\hms\\backend''; node server.js'; Start-Process powershell -ArgumentList '-NoExit','-Command','cd ''C:\\Users\\VISHAL\\OneDrive\\Documents\\Downloads\\frontend - Copy\\hms\\frontend''; npm run dev -- --host 127.0.0.1 --port 8080'\""
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd hms/backend && npm run dev",
+    "dev:frontend": "cd hms/frontend && npm run dev -- --host 127.0.0.1 --port 8080"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "csv-parser": "^3.2.0",
+    "xlsx": "^0.18.5"
   }
 }

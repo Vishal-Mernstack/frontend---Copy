@@ -1,0 +1,361 @@
+﻿{
+    "summary":  {
+                    "failed":  2,
+                    "passRate":  94.29,
+                    "total":  35,
+                    "passed":  33
+                },
+    "timestamp":  "2026-04-13 23:05:15",
+    "results":  [
+                    {
+                        "Test":  "Health Check",
+                        "Passed":  false,
+                        "Details":  "Route GET /api/v1/health not found",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101714785)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:14"
+                                      }
+                    },
+                    {
+                        "Test":  "Root Endpoint",
+                        "Passed":  false,
+                        "Details":  "Route GET /api/v1/ not found",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101714796)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:14"
+                                      }
+                    },
+                    {
+                        "Test":  "404 Handler",
+                        "Passed":  true,
+                        "Details":  "Route GET /api/v1/nonexistent not found",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101714808)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:14"
+                                      }
+                    },
+                    {
+                        "Test":  "Admin Registration (no auth - should fail)",
+                        "Passed":  true,
+                        "Details":  "Admin accounts can only be created by an authenticated admin",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101714824)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:14"
+                                      }
+                    },
+                    {
+                        "Test":  "Staff Registration",
+                        "Passed":  true,
+                        "Details":  " | Response: User registered",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101714953)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:14"
+                                      }
+                    },
+                    {
+                        "Test":  "Valid Login",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715056)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Invalid Login (should fail)",
+                        "Passed":  true,
+                        "Details":  "Invalid credentials",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715061)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Wrong Password Login (should fail)",
+                        "Passed":  true,
+                        "Details":  "Invalid credentials",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715156)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Get Current User (/auth/me)",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715172)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Get Current User (no token - should fail)",
+                        "Passed":  true,
+                        "Details":  "Unauthorized",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715178)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Staff Access - List Patients",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715252)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Create Patient",
+                        "Passed":  true,
+                        "Details":  " | Response: Patient created",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715267)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Get All Patients",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715278)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Get Patient by ID",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715285)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Update Patient",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715296)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Get Invalid Patient (should 404)",
+                        "Passed":  true,
+                        "Details":  "Patient not found",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715302)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Get All Doctors",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715313)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Create Doctor",
+                        "Passed":  true,
+                        "Details":  " | Response: Doctor created",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715321)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Create Appointment",
+                        "Passed":  true,
+                        "Details":  " | Response: Appointment created",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715338)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Get All Appointments",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715349)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Create Billing",
+                        "Passed":  true,
+                        "Details":  " | Response: Billing record created",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715363)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Get All Billing",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715371)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Create Lab Order",
+                        "Passed":  true,
+                        "Details":  " | Response: Lab order created",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715383)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Get All Lab Orders",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715391)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Create Medicine",
+                        "Passed":  true,
+                        "Details":  " | Response: Pharmacy item created",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715405)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Get All Medicines",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715413)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "SQL Injection Prevention",
+                        "Passed":  true,
+                        "Details":  "SQL injection test: ",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715429)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "XSS Prevention (input validation)",
+                        "Passed":  true,
+                        "Details":  "XSS test:  - Name stored as: \u0026lt;script\u0026gt;alert(\u0026#x27;xss\u0026#x27;)\u0026lt;\u0026#x2F;script\u0026gt;",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715437)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "RBAC - Doctor cannot create billing",
+                        "Passed":  true,
+                        "Details":  "Forbidden",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715533)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Validation - Empty Patient Name (should fail)",
+                        "Passed":  true,
+                        "Details":  "\"name\" is not allowed to be empty",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715541)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Validation - Invalid Email (should fail)",
+                        "Passed":  true,
+                        "Details":  "\"email\" must be a valid email",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715545)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Validation - Negative Age (should fail)",
+                        "Passed":  true,
+                        "Details":  "\"age\" must be greater than or equal to 0",
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715549)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Delete Test Billing",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715557)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Delete Test Appointment",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715564)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    },
+                    {
+                        "Test":  "Delete Test Patient",
+                        "Passed":  true,
+                        "Details":  null,
+                        "Timestamp":  {
+                                          "value":  "\/Date(1776101715570)\/",
+                                          "DisplayHint":  2,
+                                          "DateTime":  "13 April 2026 23:05:15"
+                                      }
+                    }
+                ]
+}

@@ -89,7 +89,7 @@ export default function Doctors() {
     updating,
   } = useDoctors({ page: 1, limit: 200, search: debouncedSearch });
 
-  const doctors = data?.items || [];
+  const doctors = useMemo(() => data?.items || [], [data?.items]);
 
   const filteredDoctors = useMemo(() => {
     let items = [...doctors];

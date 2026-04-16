@@ -18,7 +18,7 @@ export default function ProtectedRoute({ children, roles = [] }) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/role-based-login" replace />;
   }
 
   if (roles?.length > 0 && !roles.includes(user?.role)) {

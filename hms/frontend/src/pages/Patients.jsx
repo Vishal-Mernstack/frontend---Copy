@@ -51,7 +51,7 @@ export default function Patients() {
     status: statusFilter === "all" ? "" : statusFilter,
   });
 
-  const patients = data?.items || [];
+  const patients = useMemo(() => data?.items || [], [data?.items]);
 
   const sortedPatients = useMemo(() => {
     const list = [...patients];

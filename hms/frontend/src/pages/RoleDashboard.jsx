@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
-import { HOME_BY_ROLE, ROLE_LABELS, ROLE_NAV_ITEMS } from "../utils/roles";
+import { ROLE_LABELS, ROLE_NAV_ITEMS } from "../utils/roles";
 
 const staffQuickActions = [
   {
@@ -24,10 +24,10 @@ const staffQuickActions = [
 
 export default function RoleDashboard() {
   const { user } = useAuth();
-  const role = user?.role || "staff";
+  const role = user?.role || "admin";
   const roleLabel = ROLE_LABELS[role] || "User";
-  const navItems = ROLE_NAV_ITEMS[role] || ROLE_NAV_ITEMS.staff;
-  const homePath = HOME_BY_ROLE[role] || "/";
+  const navItems = ROLE_NAV_ITEMS[role] || ROLE_NAV_ITEMS.admin;
+  const homePath = navItems[0]?.to || "/admin";
 
   return (
     <div className="space-y-6">
@@ -37,7 +37,7 @@ export default function RoleDashboard() {
             {roleLabel} Dashboard
           </h1>
           <p className="text-sm text-slate-500">
-            Personalized workspace for {user?.name || roleLabel.toLowerCase()}.
+            Personalized workspace for {roleLabel.toLowerCase()}.
           </p>
         </div>
         <Button asChild className="bg-sky-600 hover:bg-sky-700">

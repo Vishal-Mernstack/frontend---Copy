@@ -129,10 +129,7 @@ export default function RoleBasedLogin() {
             <p className="mt-2 max-w-2xl text-sm text-slate-600">
               Choose your hospital role first, then sign in with the account assigned to that role.
             </p>
-          </div>
-          <Button asChild variant="outline">
-            <Link to="/login">Standard Login</Link>
-          </Button>
+</div>
         </div>
 
         {!selectedRole ? (
@@ -181,7 +178,7 @@ export default function RoleBasedLogin() {
                 <h2 className="mt-3 text-3xl font-semibold">
                   {selectedRoleMeta?.title}
                 </h2>
-                <p className="mt-3 max-w-xl text-sm leading-6 opacity-90">
+                <p className="mt-3 max-w-xl text-sm leading-6 opacity-90 text-current">
                   {selectedRoleMeta?.description}
                 </p>
               </div>

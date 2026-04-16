@@ -13,6 +13,8 @@ CREATE TABLE users (
   password_hash TEXT NOT NULL,
   role VARCHAR(20) NOT NULL DEFAULT 'staff',
   status VARCHAR(20) NOT NULL DEFAULT 'Active',
+  is_deleted BOOLEAN NOT NULL DEFAULT false,
+  deleted_at TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -30,6 +32,8 @@ CREATE TABLE patients (
   medical_history TEXT,
   last_visit DATE,
   status VARCHAR(20) NOT NULL DEFAULT 'Active',
+  is_deleted BOOLEAN NOT NULL DEFAULT false,
+  deleted_at TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -47,6 +51,8 @@ CREATE TABLE doctors (
   rating DECIMAL(2,1) NOT NULL DEFAULT 0,
   bio TEXT,
   status VARCHAR(20) NOT NULL DEFAULT 'Active',
+  is_deleted BOOLEAN NOT NULL DEFAULT false,
+  deleted_at TIMESTAMP,
   working_hours JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
@@ -60,14 +66,33 @@ CREATE TABLE appointments (
   appointment_date TIMESTAMP NOT NULL,
   duration INTEGER NOT NULL DEFAULT 30,
   type VARCHAR(100) NOT NULL,
-  status VARCHAR(20) NOT NULL DEFAULT 'Scheduled',
+  status VARCHAR(20) NOT NULL DEFAULT 'Booked',
+  status_reason TEXT,
   notes TEXT,
   symptoms TEXT,
   prescription TEXT,
   follow_up_date DATE,
+  is_deleted BOOLEAN NOT NULL DEFAULT false,
+  deleted_at TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX idx_appointments_status ON appointments(status);
+CREATE INDEX idx_appointments_date ON appointments(appointment_date);
+
+CREATE TABLE appointment_status_history (
+  id SERIAL PRIMARY KEY,
+  appointment_id INTEGER NOT NULL REFERENCES appointments(id) ON DELETE CASCADE,
+  previous_status VARCHAR(20),
+  new_status VARCHAR(20) NOT NULL,
+  reason TEXT,
+  changed_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  changed_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_status_history_appointment ON appointment_status_history(appointment_id);
+CREATE INDEX idx_status_history_changed_at ON appointment_status_history(changed_at);
 
 CREATE TABLE billing (
   id SERIAL PRIMARY KEY,
@@ -85,6 +110,8 @@ CREATE TABLE billing (
   due_date DATE,
   paid_at TIMESTAMP,
   notes TEXT,
+  is_deleted BOOLEAN NOT NULL DEFAULT false,
+  deleted_at TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -95,7 +122,10 @@ CREATE TABLE lab_orders (
   doctor_id INTEGER NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
   test_name VARCHAR(150) NOT NULL,
   result TEXT,
+  file_url TEXT,
   status VARCHAR(20) NOT NULL DEFAULT 'Pending',
+  is_deleted BOOLEAN NOT NULL DEFAULT false,
+  deleted_at TIMESTAMP,
   ordered_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -107,26 +137,59 @@ CREATE TABLE pharmacy (
   stock INTEGER NOT NULL DEFAULT 0,
   price DECIMAL(10,2) NOT NULL DEFAULT 0,
   status VARCHAR(20) NOT NULL DEFAULT 'Active',
+  is_deleted BOOLEAN NOT NULL DEFAULT false,
+  deleted_at TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX idx_users_status ON users(status);
 CREATE INDEX idx_patients_code ON patients(patient_code);
 CREATE INDEX idx_patients_status ON patients(status);
 CREATE INDEX idx_patients_name ON patients(name);
+CREATE INDEX idx_patients_deleted ON patients(is_deleted);
 CREATE INDEX idx_doctors_code ON doctors(doctor_code);
 CREATE INDEX idx_doctors_specialization ON doctors(specialization);
 CREATE INDEX idx_doctors_availability ON doctors(availability);
+CREATE INDEX idx_doctors_deleted ON doctors(is_deleted);
 CREATE INDEX idx_appointments_code ON appointments(appointment_code);
 CREATE INDEX idx_appointments_patient ON appointments(patient_id);
 CREATE INDEX idx_appointments_doctor ON appointments(doctor_id);
 CREATE INDEX idx_appointments_date ON appointments(appointment_date);
 CREATE INDEX idx_appointments_status ON appointments(status);
+CREATE INDEX idx_appointments_status_date ON appointments(status, appointment_date);
+CREATE INDEX idx_appointments_deleted ON appointments(is_deleted);
 CREATE INDEX idx_billing_invoice ON billing(invoice_id);
 CREATE INDEX idx_billing_patient ON billing(patient_id);
 CREATE INDEX idx_billing_doctor ON billing(doctor_id);
 CREATE INDEX idx_billing_status ON billing(status);
+CREATE INDEX idx_billing_date ON billing(invoice_date);
+CREATE INDEX idx_billing_status_total ON billing(status, total);
+CREATE INDEX idx_billing_deleted ON billing(is_deleted);
 CREATE INDEX idx_lab_patient ON lab_orders(patient_id);
 CREATE INDEX idx_lab_doctor ON lab_orders(doctor_id);
 CREATE INDEX idx_lab_status ON lab_orders(status);
+CREATE INDEX idx_lab_deleted ON lab_orders(is_deleted);
 CREATE INDEX idx_pharmacy_name ON pharmacy(medicine_name);
+CREATE INDEX idx_pharmacy_deleted ON pharmacy(is_deleted);
+
+CREATE TABLE audit_logs (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  action VARCHAR(50) NOT NULL,
+  entity VARCHAR(50) NOT NULL,
+  entity_id INTEGER,
+  old_values JSONB,
+  new_values JSONB,
+  ip_address VARCHAR(45),
+  user_agent TEXT,
+  timestamp TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_audit_logs_user ON audit_logs(user_id);
+CREATE INDEX idx_audit_logs_action ON audit_logs(action);
+CREATE INDEX idx_audit_logs_entity ON audit_logs(entity);
+CREATE INDEX idx_audit_logs_entity_id ON audit_logs(entity_id);
+CREATE INDEX idx_audit_logs_timestamp ON audit_logs(timestamp);
