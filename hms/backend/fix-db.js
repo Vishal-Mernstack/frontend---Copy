@@ -10,7 +10,7 @@ const pool = new Pool({
 
 async function run() {
   try {
-    const tables = ['patients', 'doctors', 'lab_orders', 'billing', 'appointments'];
+    const tables = ['patients', 'doctors', 'lab_orders', 'billing', 'appointments', 'departments', 'beds', 'admissions', 'staff', 'users', 'pharmacy'];
     for (const table of tables) {
       console.log(`Adding columns to ${table}...`);
       await pool.query(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT false`);

@@ -17,7 +17,7 @@ export default function useHospital(options = {}) {
         params.append("page", page);
         params.append("limit", limit);
         const response = await api.get(`/hospital/beds?${params}`);
-        return response.data;
+        return response.data?.data;
       },
     });
   };
@@ -59,7 +59,7 @@ export default function useHospital(options = {}) {
         params.append("page", page);
         params.append("limit", limit);
         const response = await api.get(`/hospital/admissions?${params}`);
-        return response.data;
+        return response.data?.data;
       },
     });
   };

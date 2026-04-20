@@ -12,7 +12,6 @@ import { query } from '../config/db.js';
 
 const router = Router();
 
-router.get("/", authenticate, authorize(["admin", "staff", "billing"]), getAllBilling);
 router.get("/stats", authenticate, authorize(["admin", "staff", "billing"]), async (req, res) => {
   try {
     const totalResult = await query(`
@@ -147,6 +146,7 @@ router.post("/reminder/:id", authenticate, authorize(["admin", "staff"]), async 
   }
 });
 
+router.get("/", authenticate, authorize(["admin", "staff", "billing"]), getAllBilling);
 router.get("/:id", authenticate, authorize(["admin", "staff", "doctor", "billing", "patient"]), getBillingById);
 router.post("/", authenticate, authorize(["admin", "staff", "billing"]), validate(schemas.billingCreate), createBilling);
 router.put("/:id", authenticate, authorize(["admin", "staff", "billing"]), validate(schemas.billingUpdate), updateBilling);

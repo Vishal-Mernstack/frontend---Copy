@@ -135,9 +135,13 @@ export const refreshToken = async (req, res, next) => {
       expiresIn: process.env.JWT_EXPIRES_IN || "1d",
     });
 
+    const newRefreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET || "refresh_secret_key_2024", {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d",
+    });
+
     return res.json({
       success: true,
-      data: { user, accessToken },
+      data: { user, accessToken, refreshToken: newRefreshToken },
       message: "Token refreshed",
     });
   } catch (error) {

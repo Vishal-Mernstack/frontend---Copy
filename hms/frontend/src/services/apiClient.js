@@ -8,6 +8,7 @@ const apiClient = axios.create({
 });
 
 let isRefreshing = false;
+let failedRequests = [];
 
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("medicare_token");
@@ -22,14 +23,7 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     
-    if (error?.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes("/auth/refresh-token")) {
-      if (isRefreshing) {
-        return Promise.reject(error);
-      }
-      
-      originalRequest._retry = true;
-      isRefreshing = true;
-      
+    if (error?.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes("/auth/refresh")) {
       const refreshToken = localStorage.getItem("medicare_refresh_token");
       if (!refreshToken) {
         localStorage.removeItem("medicare_token");
@@ -39,9 +33,21 @@ apiClient.interceptors.response.use(
         return Promise.reject(error);
       }
       
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedRequests.push({ resolve, reject });
+        }).then(() => {
+          originalRequest.headers.Authorization = `Bearer ${localStorage.getItem("medicare_token")}`;
+          return apiClient(originalRequest);
+        });
+      }
+      
+      originalRequest._retry = true;
+      isRefreshing = true;
+      
       try {
         const response = await axios.post(
-          `${apiClient.defaults.baseURL}/auth/refresh-token`,
+          `${apiClient.defaults.baseURL}/auth/refresh`,
           {},
           { headers: { Authorization: `Bearer ${refreshToken}` } }
         );
@@ -52,10 +58,15 @@ apiClient.interceptors.response.use(
           localStorage.setItem("medicare_refresh_token", newRefreshToken);
         }
         
+        failedRequests.forEach(({ resolve }) => resolve());
+        failedRequests = [];
+        
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         isRefreshing = false;
         return apiClient(originalRequest);
       } catch (refreshError) {
+        failedRequests.forEach(({ reject }) => reject(refreshError));
+        failedRequests = [];
         isRefreshing = false;
         localStorage.removeItem("medicare_token");
         localStorage.removeItem("medicare_user");

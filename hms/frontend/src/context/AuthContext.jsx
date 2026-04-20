@@ -22,22 +22,6 @@ export function AuthProvider({ children }) {
     const verify = async () => {
       const token = localStorage.getItem("medicare_token");
       if (!token) {
-        // Auto-login as admin on startup
-        try {
-          const response = await api.post("/auth/login", {
-            email: "admin@medicare.com",
-            password: "admin123"
-          });
-          const authData = response.data?.data || response.data || {};
-          localStorage.setItem("medicare_token", authData.token);
-          if (authData.refreshToken) {
-            localStorage.setItem("medicare_refresh_token", authData.refreshToken);
-          }
-          setStoredUser(authData.user || null);
-          setUser(authData.user || null);
-        } catch (error) {
-          // Silent failure - continue to login page if auto-login fails
-        }
         setIsLoading(false);
         return;
       }
@@ -48,9 +32,9 @@ export function AuthProvider({ children }) {
         setStoredUser(authUser);
       } catch (error) {
         localStorage.removeItem("medicare_token");
+        localStorage.removeItem("medicare_refresh_token");
         setUser(null);
         setStoredUser(null);
-        // Silent failure - don't show toast for initial token verification
       } finally {
         setIsLoading(false);
       }
