@@ -12,6 +12,7 @@ import EmptyState from "../components/shared/EmptyState";
 import LoadingSkeleton from "../components/shared/LoadingSkeleton";
 import Pagination from "../components/shared/Pagination";
 import FileDropZone from "../components/shared/FileDropZone";
+import ProductCard from "../components/pharmacy/ProductCard";
 import useDebounce from "../hooks/useDebounce";
 import usePharmacy from "../hooks/usePharmacy";
 import { BADGE_VARIANTS } from "../utils/constants";
@@ -145,6 +146,7 @@ export default function Pharmacy() {
         </div>
       </div>
 
+      
       <div className="flex flex-wrap gap-3">
         <Input
           placeholder="Search medicine or manufacturer"

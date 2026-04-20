@@ -109,6 +109,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(sanitizeInput); // XSS protection - sanitize all input
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/products", express.static(path.join(__dirname, "../products_images")));
 
 // TEMP TEST ROUTE - REMOVE AFTER TEST
 app.get("/test-route", (req, res) => res.json({ success: true, test: "works" }));

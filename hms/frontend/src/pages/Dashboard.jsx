@@ -25,6 +25,7 @@ import {
 } from "../components/ui/table";
 import LoadingSkeleton from "../components/shared/LoadingSkeleton";
 import EmptyState from "../components/shared/EmptyState";
+import ProductCard from "../components/pharmacy/ProductCard";
 import usePatients from "../hooks/usePatients";
 import useDoctors from "../hooks/useDoctors";
 import useAppointments from "../hooks/useAppointments";
@@ -232,6 +233,52 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Featured Products Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-slate-900">Featured Products</h2>
+          <Button asChild variant="outline">
+            <Link to="/pharmacy">View All Products</Link>
+          </Button>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <ProductCard />
+          <ProductCard product={{
+            id: 2,
+            name: "Organic Bananas",
+            description: "Ripe organic bananas, perfect for smoothies and healthy snacks.",
+            price: 2.49,
+            originalPrice: 3.49,
+            rating: 4.6,
+            reviews: 89,
+            inStock: true,
+            category: "Fruits",
+          }} />
+          <ProductCard product={{
+            id: 3,
+            name: "Fresh Oranges",
+            description: "Juicy oranges rich in Vitamin C, great for fresh juice.",
+            price: 3.99,
+            originalPrice: 4.99,
+            rating: 4.7,
+            reviews: 156,
+            inStock: true,
+            category: "Fruits",
+          }} />
+          <ProductCard product={{
+            id: 4,
+            name: "Mixed Berries",
+            description: "Fresh mixed berries pack - strawberries, blueberries, raspberries.",
+            price: 5.99,
+            originalPrice: 7.99,
+            rating: 4.9,
+            reviews: 203,
+            inStock: false,
+            category: "Berries",
+          }} />
+        </div>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
